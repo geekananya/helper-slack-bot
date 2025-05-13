@@ -24,18 +24,17 @@ def status():
 def webhook():
     data = request.get_json()
     print(data)
-    channel_id = data.get('event').get('channel')
-    message_ts = data.get('event').get('ts')
 
     # --- endpoint verification ---
+    if data.get('type') == 'url_verification':
+        # Check if 'challenge' key exists
+        if not data or 'challenge' not in data:
+            return jsonify({"error": "'challenge' field is missing"}), 200
+        challenge_value = data['challenge']
+        return jsonify({"challenge": challenge_value}), 200
 
-    # Check if 'challenge' key exists
-
-    # if not data or 'challenge' not in data:
-    #     return jsonify({"error": "'challenge' field is missing"}), 200
-    #
-    # challenge_value = data['challenge']
-    # return jsonify({"challenge": challenge_value}), 200
+    channel_id = data.get('event').get('channel')
+    message_ts = data.get('event').get('ts')
 
     try:
         # Call the chat.postMessage method using the WebClient
